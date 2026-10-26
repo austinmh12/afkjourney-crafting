@@ -7,7 +7,7 @@ This is currently a work in progress as it's not possible to view old levels of 
 ## TODO
 - Common
   - [ ] Convert to flask app
-  - [ ] Optimize deck calculations (Pick Hammer as 54264 unique 6 card decks, of which each has 5040 permutations, that's 273,490,560 calculations just for that recipe...)
+  - [ ] Optimize deck calculations (Pick Hammer as 54264 unique 6 card decks, of which each has 720 permutations, that's 39,070,080 calculations just for that recipe...)
 - Kitchen
   - [ ] Add remaining recipes
   - [ ] Implement any additional recipe powers
