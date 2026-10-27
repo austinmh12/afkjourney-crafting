@@ -319,8 +319,10 @@ class Soulbind(Card):
 			1: 0,
 			2: 5,
 		}.get(self.level, 0)
+		# TODO: val += score.stack.heatup
 		score.add_random(val)
 		# Soulbind retriggers enhancing cards
+		# TODO: This also include the bonuses from Forge Expert
 		for card in prev_cards:
 			if isinstance(card, (Charge, HeatUp, MultiForge)):
 				card.score(score, recipe, prev_cards)
