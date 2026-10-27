@@ -1,4 +1,5 @@
 import itertools
+from random import sample
 
 from .score import Score
 from .card import *
@@ -25,13 +26,26 @@ class Deck:
 	def __init__(self, cards: list[Card]):
 		self.cards = cards
 
-	def score(self, recipe: str) -> tuple[ScoreResults, list[Card]]:
+	def sample(self, recipe: str, samples: int = 15) -> int:
+		# Score X random permutations for their average score
+		results = ScoreResults()
+		perms = [list(x) for x in itertools.permutations(self.cards)]
+		deck_samples = sample(perms, samples)
+		for deck_sample in deck_samples:
+			score = Score()
+			for i, card in enumerate(deck_sample):
+				prev_cards = deck_sample[:i]
+				card.score(score, recipe, prev_cards)
+			results.scores.append(score)
+		return results.average
+
+	def score(self, recipe: str) -> ScoreResults:
 		# Calculates the minimum, maximum, and average score for each permutation
 		# of the deck.
 		results = ScoreResults()
 
 		# All permutations of this deck
-		perms = [list(x) for x in itertools.permutations(self.cards)]
+		perms = (list(x) for x in itertools.permutations(self.cards))
 		# print(f'Permutations of deck: {len(perms)}')
 
 		for deck_perm in perms:

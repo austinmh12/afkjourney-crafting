@@ -1,5 +1,7 @@
+from typing import Iterator
 import itertools
 from homestead import *
+from tqdm import tqdm
 
 RECIPES = [
 	# Recipe('Roasted Corn', 'Kitchen', 5, 2030, 5190, 8250, 14300),
@@ -26,7 +28,12 @@ def main():
 		decks = generate_decks(recipe.location, recipe.cards)
 		deck_results: list[tuple[Deck, ScoreResults]] = []
 		print(f'{recipe.name} has {len(decks)} unique decks')
-		for deck in decks:
+		deck_sample_average = 0
+		for deck in tqdm(decks, desc=recipe.name):
+			smp = deck.sample()
+			if smp < deck_sample_average:
+				continue
+			deck_sample_average = smp
 			deck_results.append((deck, deck.score(recipe.name)))
 		# Store the deck with the highest average
 		results[recipe] = max(deck_results, key=lambda s: s[1].average)
@@ -88,7 +95,7 @@ ALCHEMY_LEVELS = {
 	
 }
 
-def generate_decks(location: str, length: int) -> list[Deck]:
+def generate_decks(location: str, length: int) -> Iterator[Deck]:
 	decks = []
 	if location == 'Forge':
 		LIMITS = FORGE_LIMITS
@@ -103,7 +110,9 @@ def generate_decks(location: str, length: int) -> list[Deck]:
 	allowed_cards = []
 	for card, limit in LIMITS.items():
 		allowed_cards.extend([card(LEVELS.get(card))] * limit)
-	decks.extend([Deck(list(x)) for x in itertools.combinations(allowed_cards, length)])
+	for combo in itertools.combinations(allowed_cards, length):
+		# yield Deck(list(combo))
+		decks.append(Deck(list(combo)))
 	return decks
 
 if __name__ == "__main__":
