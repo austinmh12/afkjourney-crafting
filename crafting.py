@@ -77,7 +77,7 @@ FORGE_LIMITS = {
 	Ignite: 1,
 }
 FORGE_LEVELS = {
-	Forge: 5,
+	Forge: 6,
 	Charge: 3,
 	Sharpening: 1,
 	MultiForge: 1,

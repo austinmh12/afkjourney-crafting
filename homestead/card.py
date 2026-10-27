@@ -198,12 +198,13 @@ class Forge(Card):
 
 	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
 		values = {
-			1:1,
-			2:2,
-			3:3,
-			4:5,
-			5:10,
-			6:15,
+			1: 1,
+			2: 2,
+			3: 3,
+			4: 5,
+			5: 10,
+			6: 15,
+			7: 20,
 		}
 		val = values.get(self.level, 0)
 		# Apply stack bonuses
