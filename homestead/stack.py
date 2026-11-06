@@ -9,6 +9,9 @@ class Stack:
 		self.overcharge_amt = 0
 		self.overcharge_mult = 0
 		self.reversal = False
+		self.reversal_mult = 0
 		self.enchant_debuff = 0
 		self.overload_debuff = 0
 		self.harmonia = False
+		self.fuse_bonus = 0
+		self.fuse_gap = 0
