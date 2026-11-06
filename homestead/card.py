@@ -533,7 +533,7 @@ class Conflux(Card):
 	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
 		score.add_highest(score.lowest // 2)
 
-class Cyrstallize(Card):
+class Crystallize(Card):
 	def __init__(self, level: int):
 		super().__init__('Cyrstallize', level)
 

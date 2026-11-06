@@ -9,15 +9,16 @@ RECIPES = [
 	# Recipe('Healthy Candied Skewer', 'Kitchen', 6, 2400, 6560, 11200, 21600),
 	# Recipe('Popcorn', 'Kitchen', 5, 2080, 5290, 8640, 15200),
 	# Recipe('Earthy Flatbread', 'Kitchen', 6, 3950, 9630, 15100, 26500),
-	Recipe('Copper Carver', 'Forge', 3, 6, 8),
-	Recipe('Copper Mask', 'Forge', 4, 15, 30),
-	Recipe('Fine Carver', 'Forge', 5, 32, 100),
-	Recipe('Pick Hammer', 'Forge', 6, 1110, 4640, 20000, 91500),
-	Recipe('Protective Pick Hammer', 'Forge', 6, 1650, 9894, 33666, 129234), # TODO: Artisan cards all need to do the pyroburst check for this recipe
-	Recipe('Herb Tray', 'Forge', 7, 234, 11100, 30100, 97000),
-	Recipe('Mithril Mortar', 'Forge', 5, 450, 6570, 16800, 37200),
-	Recipe('Thermo Chest', 'Forge', 6, 1250, 4490, 24000, 51000),
-	Recipe('Iron Mixing Dish', 'Forge', 7, 1490, 11800, 26700, 49000)
+	# Recipe('Copper Carver', 'Forge', 3, 6, 8),
+	# Recipe('Copper Mask', 'Forge', 4, 15, 30),
+	# Recipe('Fine Carver', 'Forge', 5, 32, 100),
+	# Recipe('Pick Hammer', 'Forge', 6, 1110, 4640, 20000, 91500),
+	# Recipe('Protective Pick Hammer', 'Forge', 6, 1650, 9894, 33666, 129234), # TODO: Artisan cards all need to do the pyroburst check for this recipe
+	# Recipe('Herb Tray', 'Forge', 7, 234, 11100, 30100, 97000),
+	# Recipe('Mithril Mortar', 'Forge', 5, 450, 6570, 16800, 37200),
+	# Recipe('Thermo Chest', 'Forge', 6, 1250, 4490, 24000, 51000),
+	# Recipe('Iron Mixing Dish', 'Forge', 7, 1490, 11800, 26700, 49000),
+	Recipe('Repellent Sachet', 'Alchemy', 7, 5280, 11800, 21200, 53000)
 ]
 
 # TODO: Add modes for selecting highest minimum for highst chance at stars, etc.
@@ -30,7 +31,7 @@ def main():
 		print(f'{recipe.name} has {len(decks)} unique decks')
 		deck_sample_average = 0
 		for deck in tqdm(decks, desc=recipe.name):
-			smp = deck.sample()
+			smp = deck.sample(recipe.name)
 			if smp < deck_sample_average:
 				continue
 			deck_sample_average = smp
@@ -89,10 +90,30 @@ FORGE_LEVELS = {
 	Ignite: 1,
 }
 ALCHEMY_LIMITS = {
-	
+	Ingredients: 4,
+	Grind: 4,
+	Distill: 1,
+	Crystallize: 1,
+	Overload: 2,
+	Enchant: 2,
+	Fuse: 1,
+	Reversal: 1,
+	Conflux: 2,
+	Harmonia: 1,
+	Overcharge: 2,
 }
 ALCHEMY_LEVELS = {
-	
+	Ingredients: 6,
+	Grind: 8,
+	Distill: 1,
+	Crystallize: 1,
+	Overload: 2,
+	Enchant: 4,
+	Fuse: 3,
+	Reversal: 1,
+	Conflux: 1,
+	Harmonia: 1,
+	Overcharge: 1,
 }
 
 def generate_decks(location: str, length: int) -> Iterator[Deck]:
