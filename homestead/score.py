@@ -12,6 +12,12 @@ class Score:
 		self._calculated: bool = False
 
 	@property
+	def lowest(self) -> int:
+		if self.left <= self.right:
+			return self.left
+		return self.right
+
+	@property
 	def total(self) -> int:
 		# End of process actions need to be processed
 		if not self._calculated:
@@ -66,6 +72,17 @@ class Score:
 		new_val = (self.right + self.left) // 2
 		self.left = new_val
 		self.right = new_val
+
+	def apply_debuffs(self):
+		debuffs = self.stack.enchant_debuff + self.stack.overload_debuff
+		if self.stack.reversal:
+			self.add_highest(debuffs)
+		# Harmonia only allows color decrease from the highest only
+		elif self.stack.harmonia:
+			self.add_highest(-debuffs)
+		# Otherwise, sub from the lowest
+		else:
+			self.add_all(-debuffs)
 
 	def __str__(self) -> str:
 		return f'{self.left}x{self.right} ({self.total})'

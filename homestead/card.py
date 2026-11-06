@@ -421,3 +421,151 @@ class Ignite(Card):
 #################
 # Alchemy Cards #
 #################
+class Overcharge(Card):
+	def __init__(self, level: int):
+		super().__init__('Overcharge', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		amt_mults = {
+			1: (2, 3),
+			2: (3, 4),
+		}
+		amt, mult = amt_mults.get(self.level, (2, 3))
+		score.stack.overcharge_amt = amt
+		score.stack.overcharge_mult = mult
+
+class Fuse(Card):
+	def __init__(self, level: int):
+		super().__init__('Fuse', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		val_gaps = {
+			1: (5, 10),
+			2: (10, 20),
+			3: (20, 50),
+			4: (30, 80),
+		}
+		val, gap = val_gaps.get(self.level, (5, 10))
+		score.stack.fuse_bonus = val
+		score.stack.fuse_gap = gap
+
+class Ingredients(Card):
+	def __init__(self, level: int):
+		super().__init__('Ingredients', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		add, sub = {
+			1: (4, 0),
+			2: (6, 0),
+			3: (10, -2),
+			4: (15, -3),
+			5: (20, -4),
+			6: (30, -5),
+			7: (50, -7),
+		}.get(self.level, (4, 0))
+		# Standard actions is to add to the highest subtract from the lowest
+		score.add_highest(add)
+		# Reversal prevents lowest color decrease, instead add to highest with mult
+		if score.stack.reversal:
+			score.add_highest(score.stack.reversal_mult * sub * -1)
+		# Harmonia only allows color decrease from the highest only
+		elif score.stack.harmonia:
+			pass
+		# Otherwise, sub from the lowest
+		else:
+			score.add_lowest(sub)
+		score.apply_debuffs()
+
+class Reversal(Card):
+	def __init__(self, level: int):
+		super().__init__('Reversal', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		mult = {
+			1: 1,
+			2: 2,
+		}.get(self.level, 1)
+		score.stack.reversal = True
+		score.stack.reversal_mult = mult
+
+class Enchant(Card):
+	def __init__(self, level: int):
+		super().__init__('Enchant', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		val, debuff = {
+			1: (8, 1),
+			2: (16, 1),
+			3: (20, 1),
+			4: (40, 2),
+			5: (60, 3),
+		}.get(self.level, (8, 1))
+		score.add_lowest(val)
+		score.apply_debuffs()
+		# Increase debuff after as it applies to future cards
+		score.stack.enchant_debuff += debuff
+
+class Overload(Card):
+	def __init__(self, level: int):
+		super().__init__('Overload', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		val, debuff = {
+			1: (60, 1),
+			2: (100, 3)
+		}.get(self.level, (60, 1))
+		score.add_highest(val)
+		score.apply_debuffs()
+		# Increase debuff after as it applies to future cards
+		score.stack.overload_debuff += debuff
+
+class Harmonia(Card):
+	def __init__(self, level: int):
+		super().__init__('Harmonia', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		score.stack.harmonia = True
+
+class Conflux(Card):
+	def __init__(self, level: int):
+		super().__init__('Conflux', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		score.add_highest(score.lowest // 2)
+
+class Cyrstallize(Card):
+	def __init__(self, level: int):
+		super().__init__('Cyrstallize', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		score.double_lowest()
+
+class Distill(Card):
+	def __init__(self, level: int):
+		super().__init__('Distill', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		score.double_highest()
+
+class Grind(Card):
+	def __init__(self, level: int):
+		super().__init__('Grind', level)
+
+	def score(self, score: Score, recipe: str, prev_cards: list[Card]):
+		add, sub = {
+			1: (3, 0),
+			2: (4, -1),
+			3: (6, -2),
+			4: (8, -3),
+			5: (11, -4),
+			6: (15, -5),
+			7: (20, -6), # This is a guess, it was buffed
+			8: (35, -7)
+		}.get(self.level, (3, 0))
+		score.add_highest(sub)
+		if score.stack.overcharge_amt:
+			score.stack.overcharge_amt -= 1
+			score.add_highest(add * score.stack.overcharge_mult)
+		else:
+			score.add_lowest(add)
+		score.apply_debuffs()
