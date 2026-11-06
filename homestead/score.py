@@ -1,14 +1,12 @@
-from random import choice
+from random import random
 
 from .stack import Stack
 
 class Score:
-	def __init__(self, has_middle: bool = False):
+	def __init__(self):
 		self.left = 1
-		self.middle = 1
 		self.right = 1
-		self.has_middle = has_middle
-		self.stack = Stack() # For forging
+		self.stack = Stack() # For forging and alchemy
 		self.redist: bool = False
 		self.post_double: bool = False
 		self._calculated: bool = False
@@ -22,95 +20,54 @@ class Score:
 			if self.redist:
 				self.redistribute()
 			self._calculated = True
-		return self.left * self.middle * self.right
+		return self.left * self.right
 
 	def add_random(self, value: int):
-		vals = ['l', 'r', 'm'] if self.has_middle else ['l', 'r']
-		c = choice(vals)
-		if c == 'l':
+		if random() <= .5:
 			self.left += value
-		elif c == 'r':
-			self.right += value
 		else:
-			self.middle += value
+			self.right += value
 
 	def add_highest(self, value: int):
-		vals = [('l', self.left), ('m', self.middle), ('r', self.right)]
-		if not self.has_middle:
-			vals.remove(('m', self.middle))
-		highest = max(vals, key=lambda x: x[1])
-		if highest[0] == 'l':
-			self.left += value
-		elif highest[0] == 'r':
+		if self.left <= self.right:
 			self.right += value
 		else:
-			self.middle += value
+			self.left += value
 
 	def add_lowest(self, value: int):
-		vals = [('l', self.left), ('m', self.middle), ('r', self.right)]
-		if not self.has_middle:
-			vals.remove(('m', self.middle))
-		lowest = min(vals, key=lambda x: x[1])
-		if lowest[0] == 'l':
+		if self.left <= self.right:
 			self.left += value
-		elif lowest[0] == 'r':
-			self.right += value
 		else:
-			self.middle += value
+			self.right += value
 
 	def add_all(self, value: int):
 		self.left += value
 		self.right += value
-		if self.has_middle:
-			self.middle += value
 
 	def double_random(self):
-		vals = ['l', 'r', 'm'] if self.has_middle else ['l', 'r']
-		c = choice(vals)
-		if c == 'l':
+		if random() <= .5:
 			self.left *= 2
-		elif c == 'r':
-			self.right *= 2
 		else:
-			self.middle *= 2
+			self.right *= 2
 
 	def double_highest(self):
-		vals = [('l', self.left), ('m', self.middle), ('r', self.right)]
-		if not self.has_middle:
-			vals.remove(('m', self.middle))
-		highest = max(vals, key=lambda x: x[1])
-		if highest[0] == 'l':
-			self.left *= 2
-		elif highest[0] == 'r':
+		if self.left <= self.right:
 			self.right *= 2
 		else:
-			self.middle *= 2
+			self.left *= 2
 
 	def double_lowest(self):
-		vals = [('l', self.left), ('m', self.middle), ('r', self.right)]
-		if not self.has_middle:
-			vals.remove(('m', self.middle))
-		lowest = min(vals, key=lambda x: x[1])
-		if lowest[0] == 'l':
+		if self.left <= self.right:
 			self.left *= 2
-		elif lowest[0] == 'r':
-			self.right *= 2
 		else:
-			self.middle *= 2
+			self.right *= 2
 
 	def redistribute(self):
-		vals = [self.left, self.right]
-		if self.has_middle:
-			vals.append(self.middle)
-		new_val = sum(vals) // len(vals)
+		new_val = (self.right + self.left) // 2
 		self.left = new_val
 		self.right = new_val
-		if self.has_middle:
-			self.middle = new_val
 
 	def __str__(self) -> str:
-		if self.has_middle:
-			return f'{self.left}x{self.middle}x{self.right} ({self.total})'
 		return f'{self.left}x{self.right} ({self.total})'
 
 	def __lt__(self, o: object) -> bool:
